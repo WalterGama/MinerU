@@ -1,20 +1,17 @@
 services:
   mineru:
     build:
-        context: .
-        dockerfile: Dockerfile
-    #container_name: mineru
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8786:7860"
       - "31000:30000"
     volumes:
-      - ./data:/mineru/data   # mapeamento de dados persistentes
+      - ./data:/mineru/data
     environment:
-      - MINERU_DEVICE_MODE=cpu        # ou cuda se seu host tiver GPU
-      - MINERU_MODEL_SOURCE=local     # para usar modelos locais
-      - MINERU_FORMULA_ENABLE=true    # caso queira ativar extração de fórmulas
-      - MINERU_TABLE_ENABLE=true      # ativar extração de tabelas
-    command: >
-      mineru-api --host 0.0.0.0 --port 30000
+      - MINERU_DEVICE_MODE=cpu
+      - MINERU_MODEL_SOURCE=local
+      - MINERU_FORMULA_ENABLE=true
+      - MINERU_TABLE_ENABLE=true
     restart: unless-stopped
-    shm_size: 32g      # opcional, melhora performance se necessário
+    shm_size: 32g
