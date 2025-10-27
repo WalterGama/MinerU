@@ -3,8 +3,8 @@ version: "3.8"
 services:
   mineru:
     build:
-      context: ./docker/global
-      dockerfile: Dockerfile
+        context: .
+        dockerfile: Dockerfile
     container_name: mineru
     ports:
       - "7860:7860"   # porta de UI ou API (ajuste se usar outra)
