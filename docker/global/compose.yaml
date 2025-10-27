@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  mineru:
+    build:
+      context: ./docker/global
+      dockerfile: Dockerfile
+    container_name: mineru
+    ports:
+      - "7860:7860"   # porta de UI ou API (ajuste se usar outra)
+      - "30000:30000" # porta da API se usar backend dedicado
+    volumes:
+      - ./data:/mineru/data   # mapeamento de dados persistentes
+    environment:
+      - MINERU_DEVICE_MODE=cpu        # ou cuda se seu host tiver GPU
+      - MINERU_MODEL_SOURCE=local     # para usar modelos locais
+      - MINERU_FORMULA_ENABLE=true    # caso queira ativar extração de fórmulas
+      - MINERU_TABLE_ENABLE=true      # ativar extração de tabelas
+    command: >
+      mineru-api --host 0.0.0.0 --port 30000
+    restart: unless-stopped
+    shm_size: 32g      # opcional, melhora performance se necessário
