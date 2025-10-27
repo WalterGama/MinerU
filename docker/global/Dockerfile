@@ -1,32 +1,36 @@
-# Use the official vllm image for gpu with Ampere architecture and above (Compute Capability>=8.0)
-# Compute Capability version query (https://developer.nvidia.com/cuda-gpus)
-FROM vllm/vllm-openai:v0.10.1.1
+# ---------------------------
+#   MinerU Global Dockerfile
+# ---------------------------
 
-# Use the official vllm image for gpu with Turing architecture and below (Compute Capability<8.0)
-# FROM vllm/vllm-openai:v0.10.2
+# Imagem base recomendada pela documentação
+FROM python:3.10-slim
 
-# Install libgl for opencv support & Noto fonts for Chinese characters
-RUN apt-get update && \
-    apt-get install -y \
-        fonts-noto-core \
-        fonts-noto-cjk \
-        fontconfig \
-        libgl1 && \
-    fc-cache -fv && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Define diretório de trabalho
+WORKDIR /app
 
-# Install mineru latest
-RUN python3 -m pip install -U 'mineru[core]' --break-system-packages && \
-    python3 -m pip cache purge
+# Copia arquivos do projeto
+COPY . /app
 
-# Download models and update the configuration file
-RUN /bin/bash -c "mineru-models-download -s huggingface -m all"
+# Instala dependências do sistema
+RUN apt-get update && apt-get install -y \
+    git wget curl build-essential libgl1-mesa-glx libglib2.0-0 \
+ && rm -rf /var/lib/apt/lists/*
 
-# Set the entry point to activate the virtual environment and run the command line tool
-ENTRYPOINT ["/bin/bash", "-c", "export MINERU_MODEL_SOURCE=local && exec \"$@\"", "--"]
+# Instala dependências Python do MinerU
+RUN pip install --upgrade pip setuptools wheel
+RUN pip install -e . --no-cache-dir
 
+# Copia script com o favicon
 COPY app_with_favicon.py /app/app_with_favicon.py
 
-# substitui o comando padrão
+# Variáveis de ambiente padrão
+ENV MINERU_DEVICE_MODE=cpu
+ENV MINERU_MODEL_SOURCE=local
+ENV MINERU_FORMULA_ENABLE=true
+ENV MINERU_TABLE_ENABLE=true
+
+# Expõe a porta onde o app vai rodar
+EXPOSE 30000
+
+# Inicia o servidor FastAPI (app modificado com favicon)
 CMD ["uvicorn", "app_with_favicon:app", "--host", "0.0.0.0", "--port", "30000"]
