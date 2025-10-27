@@ -5,7 +5,9 @@
 FROM python:3.10-slim
 
 WORKDIR /app
-COPY . /app
+
+# Copia o repositório inteiro (não só /docker/global)
+COPY ../../ /app
 
 # Instala dependências do sistema
 RUN apt-get update && apt-get install -y \
@@ -14,9 +16,9 @@ RUN apt-get update && apt-get install -y \
 
 # Instala dependências Python do MinerU
 RUN pip install --upgrade pip setuptools wheel
-RUN pip install -e . --no-cache-dir
+RUN pip install . --no-cache-dir
 
-# Copia script com o favicon
+# Copia o script com o favicon
 COPY app_with_favicon.py /app/app_with_favicon.py
 
 # Variáveis de ambiente padrão
