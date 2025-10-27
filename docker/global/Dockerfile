@@ -25,3 +25,8 @@ RUN /bin/bash -c "mineru-models-download -s huggingface -m all"
 
 # Set the entry point to activate the virtual environment and run the command line tool
 ENTRYPOINT ["/bin/bash", "-c", "export MINERU_MODEL_SOURCE=local && exec \"$@\"", "--"]
+
+COPY app_with_favicon.py /app/app_with_favicon.py
+
+# substitui o comando padrão
+CMD ["uvicorn", "app_with_favicon:app", "--host", "0.0.0.0", "--port", "30000"]
