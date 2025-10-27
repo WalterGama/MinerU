@@ -5,7 +5,7 @@ services:
     build:
         context: .
         dockerfile: Dockerfile
-    container_name: mineru
+    #container_name: mineru
     ports:
       - "7860:7860"   # porta de UI ou API (ajuste se usar outra)
       - "30000:30000" # porta da API se usar backend dedicado
